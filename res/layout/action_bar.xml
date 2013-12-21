@@ -19,7 +19,7 @@
     android:layout_height="wrap_content"
     android:enabled="false"
     android:orientation="horizontal"
-    android:paddingEnd="8dip" >
+    android:paddingRight="8dip" >
 
     <ImageView
         android:id="@+id/up"
