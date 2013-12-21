@@ -67,7 +67,7 @@ public final class ApolloUtils {
      *         otherwise
      */
     public static final boolean hasJellyBean() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN;
+        return false;
     }
 
     /**
@@ -78,7 +78,7 @@ public final class ApolloUtils {
      *         false otherwise
      */
     public static final boolean hasJellyBeanMR2() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2;
+        return false;
     }
 
     /**
