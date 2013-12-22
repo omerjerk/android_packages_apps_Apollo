@@ -93,21 +93,10 @@ public class NotificationHelper {
         mNotification = new NotificationCompat.Builder(mService)
                 .setSmallIcon(R.drawable.stat_notify_music)
                 .setContentIntent(getPendingIntent())
-                .setPriority(Notification.PRIORITY_DEFAULT)
                 .setContent(mNotificationTemplate)
                 .build();
         // Control playback from the notification
         initPlaybackActions(isPlaying);
-        if (ApolloUtils.hasJellyBean()) {
-            // Expanded notifiction style
-            mExpandedView = new RemoteViews(mService.getPackageName(),
-                    R.layout.notification_template_expanded_base);
-            mNotification.bigContentView = mExpandedView;
-            // Control playback from the notification
-            initExpandedPlaybackActions(isPlaying);
-            // Set up the expanded content view
-            initExpandedLayout(trackName, albumName, artistName, albumArt);
-        }
         mService.startForeground(APOLLO_MUSIC_SERVICE, mNotification);
     }
 
