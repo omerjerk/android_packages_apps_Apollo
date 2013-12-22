@@ -1331,10 +1331,7 @@ public class MusicPlaybackService extends Service {
                 ? RemoteControlClient.PLAYSTATE_PLAYING
                 : RemoteControlClient.PLAYSTATE_PAUSED;
 
-        if (ApolloUtils.hasJellyBeanMR2()
-                && (what.equals(PLAYSTATE_CHANGED) || what.equals(POSITION_CHANGED))) {
-            mRemoteControlClient.setPlaybackState(playState, position(), 1.0f);
-        } else if (what.equals(PLAYSTATE_CHANGED)) {
+         if (what.equals(PLAYSTATE_CHANGED)) {
             mRemoteControlClient.setPlaybackState(playState);
         } else if (what.equals(META_CHANGED) || what.equals(QUEUE_CHANGED)) {
             Bitmap albumArt = getAlbumArt();
@@ -1357,10 +1354,6 @@ public class MusicPlaybackService extends Service {
                     .putLong(MediaMetadataRetriever.METADATA_KEY_DURATION, duration())
                     .putBitmap(RemoteControlClient.MetadataEditor.BITMAP_KEY_ARTWORK, albumArt)
                     .apply();
-
-            if (ApolloUtils.hasJellyBeanMR2()) {
-                mRemoteControlClient.setPlaybackState(playState, position(), 1.0f);
-            }
         }
     }
 
@@ -2499,14 +2492,14 @@ public class MusicPlaybackService extends Service {
          *            you want to play
          */
         public void setNextDataSource(final String path) {
-            try {
+          /*  try {
                 mCurrentMediaPlayer.setNextMediaPlayer(null);
             } catch (IllegalArgumentException e) {
                 Log.i(TAG, "Next media player is current one, continuing");
             } catch (IllegalStateException e) {
                 Log.e(TAG, "Media player not initialized!");
                 return;
-            }
+            } */
             if (mNextMediaPlayer != null) {
                 mNextMediaPlayer.release();
                 mNextMediaPlayer = null;
@@ -2517,8 +2510,19 @@ public class MusicPlaybackService extends Service {
             mNextMediaPlayer = new MediaPlayer();
             mNextMediaPlayer.setWakeMode(mService.get(), PowerManager.PARTIAL_WAKE_LOCK);
             mNextMediaPlayer.setAudioSessionId(getAudioSessionId());
+            
             if (setDataSourceImpl(mNextMediaPlayer, path)) {
-                mCurrentMediaPlayer.setNextMediaPlayer(mNextMediaPlayer);
+                mCurrentMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    public void onCompletion(MediaPlayer mp) {
+                        try {
+                            mNextMediaPlayer.prepare();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        
+                        mNextMediaPlayer.start();
+                    }
+                });
             } else {
                 if (mNextMediaPlayer != null) {
                     mNextMediaPlayer.release();
